@@ -3,6 +3,23 @@ import socket
 import threading
 
 
+def proxy_handler(client_socket, remote_host, remote_port, receive_first):
+    """
+        Args.
+        client_socket(socket.Socket): keeps connection between proxy and
+        the local client
+    """
+
+    # create the remote socket
+    remote_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    remote_socket.connect((remote_host, remote_port))
+
+    # receive data from the remote end if necessary
+    if receive_first:
+        remote_buffer = receive_from(remote_socket)
+        hexdump(remote_buffer)
+
+
 def server_loop(local_host, local_port, remote_host, remote_port,
                 receive_first):
     """
