@@ -41,6 +41,16 @@ def receive_from(connection):
     return buff
 
 
+def response_handler(buff):
+    # perform some packet modifications
+    return buff
+
+
+def request_handler(buff):
+    # perform some packet modifications
+    return buff
+
+
 def proxy_handler(client_socket, remote_host, remote_port, receive_first):
     """
         Args.
@@ -56,6 +66,46 @@ def proxy_handler(client_socket, remote_host, remote_port, receive_first):
     if receive_first:
         remote_buffer = receive_from(remote_socket)
         hexdump(remote_buffer)
+
+        # do something with this response
+        remote_buffer = response_handler(remote_buffer)
+
+        # if we have data to send to our local client, send it
+        if len(remote_buffer):
+            print "[<==] Sending %d bytes to localhost." % len(remote_buffer)
+            client_socket.send(remote_buffer)
+
+    # now lets loop and read from local,
+    # send to remote, send to local
+    # rinse, wash, repeat
+
+    while True:
+        local_buffer = receive_from(client_socket)
+        if len(local_buffer):
+            print "[==>] Received %d bytes from localhost." % len(local_buffer)
+            hexdump(local_buffer)
+
+            local_buffer = request_handler(local_buffer)
+            remote_socket.send(local_buffer)
+            print "[==>] Sent to remote."
+
+        # receive back the response
+        remote_buffer = receive_from(remote_socket)
+
+        if len(remote_buffer):
+            print "[<==] Received %d bytes from remote." % len(
+                remote_buffer)
+            hexdump(remote_buffer)
+
+            remote_buffer = response_handler(remote_buffer)
+            client_socket.send(remote_buffer)
+            print "[<==] Sent to localhost."
+
+        if not len(local_buffer) or not len(remote_buffer):
+            client_socket.close()
+            remote_socket.close()
+            print "[*] No more data. Closing connections."
+            break
 
 
 def server_loop(local_host, local_port, remote_host, remote_port,
