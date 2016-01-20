@@ -83,7 +83,7 @@ def proxy_handler(client_socket, remote_host, remote_port, receive_first):
         local_buffer = receive_from(client_socket)
         if len(local_buffer):
             print "[==>] Received %d bytes from localhost." % len(local_buffer)
-            hexdump(local_buffer)
+            print(hexdump(local_buffer))
 
             local_buffer = request_handler(local_buffer)
             remote_socket.send(local_buffer)
@@ -95,7 +95,7 @@ def proxy_handler(client_socket, remote_host, remote_port, receive_first):
         if len(remote_buffer):
             print "[<==] Received %d bytes from remote." % len(
                 remote_buffer)
-            hexdump(remote_buffer)
+            print(hexdump(remote_buffer))
 
             remote_buffer = response_handler(remote_buffer)
             client_socket.send(remote_buffer)
