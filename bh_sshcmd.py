@@ -19,4 +19,4 @@ def ssh_command(ip, user, command):
         print(ssh_session.recv(1024))
     return
 
-ssh_command('52.35.195.113', 'ubuntu', 'id')
+ssh_command('127.0.0.1', 'ubuntu', 'id')
