@@ -3,6 +3,28 @@ import socket
 import threading
 
 
+def receive_from(connection):
+    """
+    Args.
+    connection(socket.socket): socket connectinng with the remote host
+    """
+    buff = ""
+    # We set a 2 second timeout; depending on your
+    # target, this may need to be adjusted
+    # Note we didn't call this var "socket" to avoid conflicts
+    connection.settimeout(2)
+
+    try:
+        while True:
+            data = connection.recv(4096)
+            if not data:
+                break
+            buff += data
+    except:
+        pass
+    return buff
+
+
 def proxy_handler(client_socket, remote_host, remote_port, receive_first):
     """
         Args.
