@@ -140,3 +140,30 @@ def server_loop(local_host, local_port, remote_host, remote_port,
         # check above that proxy_handler is a function defined before this call
         # to threading.Thread
         proxy_thread.start()
+
+
+def main():
+    if len(sys.argv[1:]) != 5:
+        # we remove argument 0 because it's the script's name
+        print(("Usage: ./proxy.py [localhost] [localport] "
+               "[remotehost] [remoteport] [receive_first]"))
+        print "Example: ./proxy.py 127.0.0.1 9000 10.12.132.1 9000 True"
+        sys.exit(0)
+
+    local_host = sys.argv[1]
+    local_port = int(sys.argv[2])
+
+    remote_host = sys.argv[3]
+    remote_port = int(sys.argv[4])
+
+    receive_first = sys.argv[5]
+
+    if "True" in receive_first:
+        receive_first = True
+    else:
+        receive_first = False
+
+    server_loop(local_host, local_port, remote_host, remote_port, receive_first)
+
+
+main()
